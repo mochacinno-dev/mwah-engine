@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MWAH BOMBS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Elsie:wght@400;900&family=Sue+Ellen+Francisco&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Mali', cursive;
+        }
+
+        #root {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .app-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffd6e8 0%, #ffe6f5 25%, #e8d5f0 50%, #f0e6f5 75%, #ffd6e8 100%);
+        }
+
+        .header {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            border: 4px dashed #ffb3d9;
+            box-shadow: 0 8px 20px rgba(255, 179, 217, 0.3);
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            font-family: 'Elsie', cursive;
+            color: #ff66b2;
+            margin-bottom: 0.5rem;
+            text-shadow: 3px 3px 0px #ffb3d9, 5px 5px 0px #e6a3c9;
+            transform: rotate(-2deg);
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #d9a3d9;
+            font-family: 'Sue Ellen Francisco', cursive;
+            transform: rotate(1deg);
+        }
+
+        .counter {
+            margin-top: 1rem;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #ff99cc;
+            font-family: 'Mali', cursive;
+            background: white;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            border: 3px solid #ffb3d9;
+            box-shadow: 0 4px 10px rgba(255, 153, 204, 0.2);
+        }
+
+        .mwah {
+            position: absolute;
+            pointer-events: none;
+            font-weight: bold;
+            font-family: 'Sue Ellen Francisco', cursive;
+            text-shadow: 2px 2px 0px rgba(255, 179, 217, 0.5);
+            animation: mwahFloat 2s ease-out forwards;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            border: 3px dotted #d9a3d9;
+        }
+
+        .footer-text {
+            font-size: 1.3rem;
+            color: #d9a3d9;
+            font-family: 'Sue Ellen Francisco', cursive;
+        }
+
+        @keyframes mwahFloat {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -150%) scale(0.8) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .counter {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        
+        // This function handles the mwah bombs themselves.
+        function MwahBombs() {
+          const [mwahs, setMwahs] = useState([]);
+          const [totalCount, setTotalCount] = useState(0);
+
+          // This constant works as a click handler.
+          const handleClick = (e) => {
+            const newMwah = { // Nested constant to actually handle the position of the click an generation of the mwahs.
+              id: Date.now() + Math.random(),
+              x: e.clientX,
+              y: e.clientY,
+              rotation: Math.random() * 360,
+              size: 20 + Math.random() * 30,
+              color: `hsl(${Math.random() * 360}, 70%, 65%)`
+            };
+
+            setMwahs(prev => [...prev, newMwah]);
+            setTotalCount(prev => prev + 1);
+
+            setTimeout(() => {
+              setMwahs(prev => prev.filter(m => m.id !== newMwah.id));
+            }, 2000);
+          };
+
+          return (
+            <div className="app-container" onClick={handleClick}>
+              <div className="header">
+                <h1 className="title">MWAH BOMBS</h1>
+                <p className="subtitle">Click anywhere to send mwas!</p>
+                <div className="counter">Total Mwahs: {totalCount}</div>
+              </div>
+
+              {mwahs.map(mwah => (
+                <div
+                  key={mwah.id}
+                  className="mwah"
+                  style={{
+                    left: mwah.x + 'px',
+                    top: mwah.y + 'px',
+                    transform: `translate(-50%, -50%) rotate(${mwah.rotation}deg)`,
+                    fontSize: mwah.size + 'px',
+                    color: mwah.color
+                  }}
+                >
+                  mwa
+                </div>
+              ))}
+
+              <div className="footer">
+                <p className="footer-text">Made by Mila "Mocha" Rose :3</p>
+              </div>
+            </div>
+          );
+        }
+
+        ReactDOM.render(<MwahBombs />, document.getElementById('root'));
+    </script>
+</body>
+</html>
